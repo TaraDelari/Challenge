@@ -25,6 +25,8 @@ namespace Challenge.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ChallengeContext>(opt => opt.UseSqlite(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Challenge.Api")));
+            services.AddCors();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -59,9 +61,7 @@ namespace Challenge.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Challenge API V1");
             });
 
-            //TODO:Enable CORS
-
-
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
             app.UseMiddleware(typeof(ExceptionHandler));
             app.UseMvc();

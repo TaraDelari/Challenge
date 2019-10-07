@@ -4,6 +4,7 @@ using Challenge.Api.Adapters;
 using Challenge.Api.DataContracts.In;
 using Challenge.Core.Models;
 using Challenge.Core.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Challenge.Api.Controllers
