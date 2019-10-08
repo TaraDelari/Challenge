@@ -36,6 +36,11 @@ namespace Challenge.Api.Controllers
         }
 
         // POST: api/User
+        /// <summary>
+        /// Create user.
+        /// </summary>
+        /// <param name="userRequest">User request object</param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Post([FromBody] UserRequest userRequest)
         {
