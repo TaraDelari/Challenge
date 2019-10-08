@@ -29,8 +29,7 @@ namespace Challenge.Api
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<UserService>();
+            services.AddTransient<UserService>();
 
             services.AddSwaggerGen(c =>
             {
