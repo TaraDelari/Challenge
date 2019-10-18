@@ -44,7 +44,7 @@ namespace Challenge.Infrastructure.DataAccess
 
         private IQueryable<User> IncludeRelated(IQueryable<User> usersSource)
         {
-            return usersSource.Include(x => x.UserRoles);
+            return usersSource.Include(x => x.UserRoles).ThenInclude(x => x.UserRoles);
         }
     }
 }

@@ -24,5 +24,13 @@ namespace Challenge.Core.Models
             Email = email;
             PasswordHash = passwordHash;
         }
+
+        public void AssignRole(Role role)
+        {
+            UserRole userRole = new UserRole { User = this, Role = role };
+            if (UserRoles == null)
+                UserRoles = new List<UserRole>();
+            UserRoles.Add(userRole);
+        }
     }
 }

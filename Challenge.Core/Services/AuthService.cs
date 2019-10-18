@@ -42,6 +42,8 @@ namespace Challenge.Core.Services
         {
             string passwordHash = hasher.Hash(password);
             User user = new User(email, passwordHash);
+            Role role = new Role("Admin", "Admin");
+            user.AssignRole(role);
             uow.UserRepository.Insert(user);
             uow.SaveChanges();
             return user.Id;

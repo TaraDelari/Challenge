@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Challenge.Api.Migrations
 {
     [DbContext(typeof(ChallengeContext))]
-    [Migration("20191018130211_InitialCreate")]
+    [Migration("20191018135351_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
