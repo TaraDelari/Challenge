@@ -44,6 +44,11 @@ namespace Challenge.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("Email");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 

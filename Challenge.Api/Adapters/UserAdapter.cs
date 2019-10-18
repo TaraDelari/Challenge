@@ -1,13 +1,13 @@
-﻿using Challenge.Api.DataContracts.DTOs;
+﻿using Challenge.Api.DataContracts.Out;
 using Challenge.Core.Models;
 
 namespace Challenge.Api.Adapters
 {
-    public class UserAdapter
+    static class UserAdapter
     {
-        public UserDTO ToDTO(User user)
+        internal static UserDto ToDto(this User user)
         {
-            UserDTO dto = new UserDTO() { Id = user.Id, Email = user.Email };
+            UserDto dto = user == null ? null : new UserDto() { Id = user.Id, Email = user.Email };
             return dto;
         }
     }

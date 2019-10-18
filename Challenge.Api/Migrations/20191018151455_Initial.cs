@@ -2,7 +2,7 @@
 
 namespace Challenge.Api.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,6 +30,7 @@ namespace Challenge.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.UniqueConstraint("AK_Users_Email", x => x.Email);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,6 +61,12 @@ namespace Challenge.Api.Migrations
                 name: "IX_UserRole_RoleName",
                 table: "UserRole",
                 column: "RoleName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

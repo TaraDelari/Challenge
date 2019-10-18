@@ -14,21 +14,18 @@ namespace Challenge.Infrastructure.DataAccess
             this.context = context;
         }
 
-        public User Get(int id, bool includeRelated = true)
+        public User Get(int id)
         {
-            IQueryable<User> userSource = context.Users;
-            if (includeRelated)
-                userSource = IncludeRelated(userSource);
-            User user = userSource.SingleOrDefault(x => x.Id == id);
+            User user = context.Users
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
+                .SingleOrDefault(x => x.Id == id);
             return user;
         }
 
-        public IQueryable<User> Get(bool includeRelated = true)
+        public IQueryable<User> Get()
         {
-            IQueryable<User> userSource = context.Users;
-            if (includeRelated)
-                userSource = IncludeRelated(userSource);
-            return userSource;
+            return context.Users.Include(x => x.UserRoles).ThenInclude(x => x.Role);
         }
 
         public void Insert(User user)
@@ -40,11 +37,6 @@ namespace Challenge.Infrastructure.DataAccess
         {
             User user = context.Users.SingleOrDefault(x => x.Id == id);
             context.Remove(user);
-        }
-
-        private IQueryable<User> IncludeRelated(IQueryable<User> usersSource)
-        {
-            return usersSource.Include(x => x.UserRoles).ThenInclude(x => x.UserRoles);
         }
     }
 }

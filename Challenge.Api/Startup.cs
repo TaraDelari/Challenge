@@ -1,6 +1,6 @@
 ﻿using Challenge.Api.Middleware;
-using Challenge.Core.Configuration;
 using Challenge.Core.Contracts;
+using Challenge.Core.Options;
 using Challenge.Core.Services;
 using Challenge.Infrastructure.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +14,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -37,7 +36,8 @@ namespace Challenge.Api
             services.AddCors();
 
             // ===== Add Jwt Authentication ========
-            services.Configure<JwtOptions>(Configuration.GetSection("JWTConfiguration"));
+            services.Configure<JwtOptions>(Configuration.GetSection("Jwt"));
+            services.Configure<AccountOptions>(Configuration.GetSection("Account"));
             var serviceProvider = services.BuildServiceProvider();
             var jwtOptions = serviceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
             //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -108,7 +108,7 @@ namespace Challenge.Api
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
-            app.UseMiddleware(typeof(ExceptionHandler));
+            app.UseMiddleware<ExceptionHandler>();
             app.UseAuthentication();
             app.UseMvc();
         }

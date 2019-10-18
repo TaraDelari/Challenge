@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Challenge.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : BaseController
     {
         // GET api/values
         [Authorize]
@@ -20,7 +20,7 @@ namespace Challenge.Api.Controllers
         }
 
         // GET api/values/5
-        [Authorize(Roles = "SuperUser")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {

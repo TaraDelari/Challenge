@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Challenge.Api.Adapters;
+﻿using Challenge.Api.Adapters;
 using Challenge.Api.DataContracts.In;
+using Challenge.Api.DataContracts.Out;
 using Challenge.Core.Models;
 using Challenge.Core.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Challenge.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
 
         private readonly AuthService authService;
@@ -27,28 +23,34 @@ namespace Challenge.Api.Controllers
         /// User login.
         /// </summary>
         /// <param name="loginRequest">Login request object</param>
-        /// <returns>Jwt token.</returns>
+        /// <returns>Logged in user, along with access token.</returns>
         [HttpPost("login")]
         public ActionResult Login([FromBody] LoginRequest loginRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            string result = authService.SignIn(loginRequest.Email, loginRequest.Password);
-            return Ok(result);
+            Result<LoginResult> loginResult = authService.Login(loginRequest.Email, loginRequest.Password);
+            if (loginResult.Succeeded)
+                return Ok(loginResult.Data.ToDto());
+            else
+                return CreateErrorResponse(loginResult);
         }
 
         /// <summary>
         /// Register user.
         /// </summary>
         /// <param name="registerRequest">Register request object</param>
-        /// <returns></returns>
+        /// <returns>Newly created user.</returns>
         [HttpPost("register")]
         public ActionResult Register([FromBody] RegisterRequest registerRequest)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            authService.CreateUser(registerRequest.Email, registerRequest.Password);
-            return Ok();
+            Result<User> registrationResult = authService.CreateUser(registerRequest.Email, registerRequest.Password);
+            if (registrationResult.Succeeded)
+                return Ok(registrationResult.Data.ToDto());
+            else
+                return CreateErrorResponse(registrationResult);
         }
     }
 }

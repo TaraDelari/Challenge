@@ -1,6 +1,6 @@
-﻿namespace Challenge.Api.DataContracts.DTOs
+﻿namespace Challenge.Api.DataContracts.Out
 {
-    public class UserDTO
+    public class UserDto
     {
         public int Id { get; set; }
         public string Email { get; set; }

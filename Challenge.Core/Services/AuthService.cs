@@ -1,6 +1,6 @@
-﻿using Challenge.Core.Configuration;
-using Challenge.Core.Contracts;
+﻿using Challenge.Core.Contracts;
 using Challenge.Core.Models;
+using Challenge.Core.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -17,36 +17,56 @@ namespace Challenge.Core.Services
         readonly IUnitOfWork uow;
         readonly IHasher hasher;
         readonly JwtOptions jwtOptions;
+        readonly AccountOptions accountOptions;
 
-        public AuthService(IUnitOfWork uow, IHasher hasher, IOptions<JwtOptions> jwtOptionsAccessor)
+        public AuthService(IUnitOfWork uow, IHasher hasher, IOptions<JwtOptions> jwtOptionsAccessor, IOptions<AccountOptions> accountOptionsAccessor)
         {
             this.uow = uow;
             this.hasher = hasher;
-            jwtOptions = jwtOptionsAccessor.Value;
+            this.jwtOptions = jwtOptionsAccessor.Value;
+            this.accountOptions = accountOptionsAccessor.Value;
         }
 
-        public string SignIn(string email, string password)
+        public Result<LoginResult> Login(string email, string password)
         {
-            string passwordHash = hasher.Hash(password);
+            Result<LoginResult> result = new Result<LoginResult>();
+
             User user = uow.UserRepository.Get().SingleOrDefault(x => x.Email == email);
-            if (user != null)
+            if (user == null)
+                result.Error = "Invalid credentials."; //TODO: Avoid magic strings
+            else
             {
                 bool validPassword = hasher.Verify(password, user.PasswordHash);
-                if (!validPassword)
-                    return "Error";
+                if (validPassword) {
+                    string token = GenerateJwtToken(user);
+                    result.Data = new LoginResult(user, token);
+                }
+                else
+                    result.Error = "Invalid credentials."; //TODO: Avoid magic strings
             }
-            return GenerateJwtToken(user);
+
+            return result;
         }
 
-        public int CreateUser(string email, string password)
+        public Result<User> CreateUser(string email, string password)
         {
-            string passwordHash = hasher.Hash(password);
-            User user = new User(email, passwordHash);
-            Role role = new Role("Admin", "Admin");
-            user.AssignRole(role);
-            uow.UserRepository.Insert(user);
-            uow.SaveChanges();
-            return user.Id;
+            Result<User> result = new Result<User>();
+
+            User existingUser = uow.UserRepository.Get().SingleOrDefault(x => x.Email == email);
+            if (existingUser == null)
+            {
+                string passwordHash = hasher.Hash(password);
+                User user = new User(email, passwordHash);
+                Role role = uow.RoleRepository.Get(accountOptions.DefaultRole);
+                user.AssignRole(role);
+                uow.UserRepository.Insert(user);
+                uow.SaveChanges();
+                result.Data = user;
+            }
+            else
+                result.Error = "Email used."; //TODO: Avoid magic strings
+
+            return result;
         }
 
         private string GenerateJwtToken(User user)
@@ -58,14 +78,11 @@ namespace Challenge.Core.Services
             };
 
             foreach (Role role in user.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role.Name));
-
-            }
+                claims.Add(new Claim("roles", role.Name));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            DateTime expires = DateTime.Now.AddDays(Convert.ToDouble(jwtOptions.JwtExpireDays));
+            DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(jwtOptions.JwtExpireMinutes));
 
             var token = new JwtSecurityToken(
                 jwtOptions.JwtIssuer,

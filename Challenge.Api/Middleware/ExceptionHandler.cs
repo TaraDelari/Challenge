@@ -1,4 +1,5 @@
-﻿using Challenge.Core.Constatns;
+﻿using Challenge.Api.DataContracts.Out;
+using Challenge.Core.Constatns;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -34,7 +35,7 @@ namespace Challenge.Api.Middleware
         {
             logger.LogError(LogEventIds.UNHANDLED_EXCEPTION, ex, ex.Message);
 
-            var result = JsonConvert.SerializeObject(new { error = ex.Message });
+            var result = JsonConvert.SerializeObject(new ErrorDto { Error = "Something went wrong." }); //TODO: Avoid magic strings
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = 500;
             return context.Response.WriteAsync(result);

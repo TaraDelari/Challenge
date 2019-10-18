@@ -5,8 +5,8 @@ namespace Challenge.Core.Contracts
 {
     public interface IUserRepository
     {
-        User Get(int id, bool includeRelated = true);
-        IQueryable<User> Get(bool includeRelated = true);
+        User Get(int id);
+        IQueryable<User> Get();
         void Insert(User user);
         void Delete(int id);
     }
