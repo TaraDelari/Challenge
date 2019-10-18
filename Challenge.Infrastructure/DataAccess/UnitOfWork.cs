@@ -7,6 +7,7 @@ namespace Challenge.Infrastructure.DataAccess
     {
         readonly ChallengeContext context;
         UserRepository userRepository;
+        RoleRepository roleRepository;
 
         public UnitOfWork(ChallengeContext context)
         {
@@ -20,6 +21,16 @@ namespace Challenge.Infrastructure.DataAccess
                 if (userRepository == null)
                     userRepository = new UserRepository(context);
                 return userRepository;
+            }
+        }
+
+        public IRoleRepository RoleRepository
+        {
+            get
+            {
+                if (roleRepository == null)
+                    roleRepository = new RoleRepository(context);
+                return roleRepository;
             }
         }
 

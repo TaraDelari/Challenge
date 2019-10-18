@@ -27,7 +27,7 @@ namespace Challenge.Api.Controllers
         /// User login.
         /// </summary>
         /// <param name="loginRequest">Login request object</param>
-        /// <returns></returns>
+        /// <returns>Jwt token.</returns>
         [HttpPost("login")]
         public ActionResult Login([FromBody] LoginRequest loginRequest)
         {

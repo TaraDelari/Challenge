@@ -35,7 +35,7 @@ namespace Challenge.Core.Services
                 if (!validPassword)
                     return "Error";
             }
-            return GenerateJwtToken(email, user);
+            return GenerateJwtToken(user);
         }
 
         public int CreateUser(string email, string password)
@@ -47,14 +47,19 @@ namespace Challenge.Core.Services
             return user.Id;
         }
 
-        private string GenerateJwtToken(string email, User user)
+        private string GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                //new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach (Role role in user.Roles)
+            {
+                claims.Add(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", role.Name));
+
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -66,6 +71,7 @@ namespace Challenge.Core.Services
                 claims,
                 expires: expires,
                 signingCredentials: creds
+                
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);

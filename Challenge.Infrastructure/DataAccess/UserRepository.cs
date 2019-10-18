@@ -1,6 +1,6 @@
 ﻿using Challenge.Core.Contracts;
 using Challenge.Core.Models;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Challenge.Infrastructure.DataAccess
@@ -44,8 +44,7 @@ namespace Challenge.Infrastructure.DataAccess
 
         private IQueryable<User> IncludeRelated(IQueryable<User> usersSource)
         {
-            throw new NotImplementedException();
-            //return usersSource.Include(x => x.FirstThingToInclude).Include(x => x.SecondToInclude);
+            return usersSource.Include(x => x.UserRoles);
         }
     }
 }
