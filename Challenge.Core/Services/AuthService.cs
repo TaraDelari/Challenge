@@ -28,7 +28,7 @@ namespace Challenge.Core.Services
         public string SignIn(string email, string password)
         {
             string passwordHash = hasher.Hash(password);
-            User user = uow.UserRepository.Get(false).SingleOrDefault(x => x.Email == email);
+            User user = uow.UserRepository.Get().SingleOrDefault(x => x.Email == email);
             if (user != null)
             {
                 bool validPassword = hasher.Verify(password, user.PasswordHash);
@@ -57,7 +57,7 @@ namespace Challenge.Core.Services
 
             foreach (Role role in user.Roles)
             {
-                claims.Add(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", role.Name));
+                claims.Add(new Claim(ClaimTypes.Role, role.Name));
 
             }
 
