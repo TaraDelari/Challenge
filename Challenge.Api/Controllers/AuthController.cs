@@ -18,9 +18,9 @@ namespace Challenge.Api.Controllers
 
         private readonly AuthService authService;
 
-        public AuthController(AuthService userService)
+        public AuthController(AuthService authService)
         {
-            this.authService = userService;
+            this.authService = authService;
         }
 
         /// <summary>
