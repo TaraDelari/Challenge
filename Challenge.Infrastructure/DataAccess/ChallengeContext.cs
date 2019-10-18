@@ -19,8 +19,8 @@ namespace Challenge.Infrastructure.DataAccess
         private void ConfigureForUser(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasKey(x => x.Id);
-            modelBuilder.Entity<User>().Property(c => c.FirstName).HasMaxLength(255).IsRequired();
-            modelBuilder.Entity<User>().Property(c => c.LastName).HasMaxLength(255).IsRequired();
+            modelBuilder.Entity<User>().Property(c => c.Email).HasMaxLength(255).IsRequired();
+            modelBuilder.Entity<User>().Property(c => c.PasswordHash).HasMaxLength(255).IsRequired();
 
         }
     }

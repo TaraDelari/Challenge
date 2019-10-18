@@ -2,7 +2,7 @@
 
 namespace Challenge.Api.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initialcreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,8 +12,8 @@ namespace Challenge.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(maxLength: 255, nullable: false),
-                    LastName = table.Column<string>(maxLength: 255, nullable: false)
+                    Email = table.Column<string>(maxLength: 255, nullable: false),
+                    PasswordHash = table.Column<string>(maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {

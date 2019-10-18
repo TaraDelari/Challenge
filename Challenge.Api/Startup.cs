@@ -1,17 +1,23 @@
 ﻿using Challenge.Api.Middleware;
+using Challenge.Core.Configuration;
 using Challenge.Core.Contracts;
 using Challenge.Core.Services;
 using Challenge.Infrastructure.DataAccess;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace Challenge.Api
 {
@@ -30,9 +36,36 @@ namespace Challenge.Api
             services.AddDbContext<ChallengeContext>(opt => opt.UseSqlite(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Challenge.Api")));
             services.AddCors();
 
+            // ===== Add Jwt Authentication ========
+            services.Configure<JwtOptions>(Configuration.GetSection("JWTConfiguration"));
+            var serviceProvider = services.BuildServiceProvider();
+            var jwtOptions = serviceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
+            //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtOptions.JwtIssuer,
+                        ValidAudience = jwtOptions.JwtIssuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey)),
+                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                    };
+                });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<UserService>();
+            services.AddScoped<IHasher, PasswordHasher>();
+            services.AddTransient<AuthService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -76,6 +109,7 @@ namespace Challenge.Api
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
             app.UseMiddleware(typeof(ExceptionHandler));
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

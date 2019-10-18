@@ -3,13 +3,13 @@
     public class User
     {
         public int Id { get; private set; }
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
+        public string Email { get; private set; }
+        public string PasswordHash { get; private set; }
 
-        public User(string firstName, string lastName)
+        public User(string email, string passwordHash)
         {
-            FirstName = firstName;
-            LastName = lastName;
+            Email = email;
+            PasswordHash = passwordHash;
         }
     }
 }
