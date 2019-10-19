@@ -19,20 +19,26 @@ namespace Challenge.Core.UnitTests.Services
         public void UnusedEmail_NewUserCreated()
         {
             //arrange
+            string email = "test@example.com";
+            string password = "testPassword";
+            string passwordHash = "testPasswordHash";
             Mock<IUnitOfWork> unitOfWorkMock = new Mock<IUnitOfWork>();
             Mock<IHasher> hasherMock = new Mock<IHasher>();
             Mock<ITokenGenerator> tokenGeneratorMock = new Mock<ITokenGenerator>();
             IOptions<AccountOptions> accountOptionsMock = Microsoft.Extensions.Options.Options.Create(new AccountOptions());
             unitOfWorkMock.Setup(x => x.UserRepository.Get()).Returns(() => Enumerable.Empty<User>().AsQueryable());
             unitOfWorkMock.Setup(x => x.RoleRepository.Get(accountOptionsMock.Value.DefaultRole)).Returns(() => new Role(accountOptionsMock.Value.DefaultRole));
+            hasherMock.Setup(x => x.Hash(It.IsAny<string>())).Returns(passwordHash);
             AuthService sut = new AuthService(unitOfWorkMock.Object, hasherMock.Object, tokenGeneratorMock.Object, accountOptionsMock);
 
             //act
-            Result<User> registrationResult = sut.CreateUser("email", "passwordHash");
+            Result<User> registrationResult = sut.CreateUser(email, password);
 
             //assert
             unitOfWorkMock.Verify(x => x.UserRepository.Insert(It.IsAny<User>()), Times.Once);
             Assert.True(registrationResult.Succeeded);
+            Assert.Equal(email, registrationResult.Data.Email);
+            Assert.Equal(passwordHash, registrationResult.Data.PasswordHash);
         }
 
         [Fact]
