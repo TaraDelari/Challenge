@@ -3,13 +3,7 @@ using Challenge.Core.Contracts;
 using Challenge.Core.Models;
 using Challenge.Core.Options;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 
 namespace Challenge.Core.Services
 {
@@ -17,14 +11,14 @@ namespace Challenge.Core.Services
     {
         readonly IUnitOfWork uow;
         readonly IHasher hasher;
-        readonly JwtOptions jwtOptions;
+        readonly ITokenGenerator tokenGenerator;
         readonly AccountOptions accountOptions;
 
-        public AuthService(IUnitOfWork uow, IHasher hasher, IOptions<JwtOptions> jwtOptionsAccessor, IOptions<AccountOptions> accountOptionsAccessor)
+        public AuthService(IUnitOfWork uow, IHasher hasher, ITokenGenerator tokenGenerator, IOptions<AccountOptions> accountOptionsAccessor)
         {
             this.uow = uow;
             this.hasher = hasher;
-            this.jwtOptions = jwtOptionsAccessor.Value;
+            this.tokenGenerator = tokenGenerator;
             this.accountOptions = accountOptionsAccessor.Value;
         }
 
@@ -40,7 +34,7 @@ namespace Challenge.Core.Services
                 bool validPassword = hasher.Verify(password, user.PasswordHash);
                 if (validPassword)
                 {
-                    string token = GenerateJwtToken(user);
+                    string token = tokenGenerator.Generate(user);
                     result.Data = new LoginResult(user, token);
                 }
                 else
@@ -69,33 +63,6 @@ namespace Challenge.Core.Services
                 result.Error = ErrorMessages.EMAIL_USED;
 
             return result;
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
-
-            foreach (Role role in user.Roles)
-                claims.Add(new Claim("roles", role.Name));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            DateTime expires = DateTime.Now.AddMinutes(Convert.ToDouble(jwtOptions.JwtExpireMinutes));
-
-            var token = new JwtSecurityToken(
-                jwtOptions.JwtIssuer,
-                jwtOptions.JwtIssuer,
-                claims,
-                expires: expires,
-                signingCredentials: creds
-                
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

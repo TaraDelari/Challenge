@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Challenge.Api.Migrations
 {
     [DbContext(typeof(ChallengeContext))]
-    [Migration("20191018151455_Initial")]
-    partial class Initial
+    [Migration("20191019171306_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,18 @@ namespace Challenge.Api.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "Admin",
+                            DisplayName = "Admin"
+                        },
+                        new
+                        {
+                            Name = "User",
+                            DisplayName = "User"
+                        });
                 });
 
             modelBuilder.Entity("Challenge.Core.Models.User", b =>

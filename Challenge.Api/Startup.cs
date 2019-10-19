@@ -65,6 +65,7 @@ namespace Challenge.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IHasher, PasswordHasher>();
+            services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
             services.AddTransient<AuthService>();
 
             services.AddSwaggerGen(c =>

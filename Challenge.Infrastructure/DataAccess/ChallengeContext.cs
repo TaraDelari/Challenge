@@ -17,6 +17,7 @@ namespace Challenge.Infrastructure.DataAccess
             ConfigureForUser(modelBuilder);
             ConfigureForRole(modelBuilder);
             ConfigureForUserRole(modelBuilder);
+            SeedData(modelBuilder);
         }
 
         private void ConfigureForUser(ModelBuilder modelBuilder)
@@ -41,6 +42,12 @@ namespace Challenge.Infrastructure.DataAccess
             modelBuilder.Entity<UserRole>().HasKey(x => new { x.UserId, x.RoleName });
             modelBuilder.Entity<UserRole>().HasOne(x => x.User).WithMany(x => x.UserRoles).HasForeignKey(x => x.UserId).IsRequired();
             modelBuilder.Entity<UserRole>().HasOne(x => x.Role).WithMany().HasForeignKey(x => x.RoleName).IsRequired();
+        }
+
+        private void SeedData(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Role>().HasData(new Role("Admin"));
+            modelBuilder.Entity<Role>().HasData(new Role("User"));
         }
     }
 }

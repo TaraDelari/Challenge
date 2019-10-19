@@ -27,6 +27,18 @@ namespace Challenge.Api.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "Admin",
+                            DisplayName = "Admin"
+                        },
+                        new
+                        {
+                            Name = "User",
+                            DisplayName = "User"
+                        });
                 });
 
             modelBuilder.Entity("Challenge.Core.Models.User", b =>

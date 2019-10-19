@@ -2,7 +2,7 @@
 
 namespace Challenge.Api.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -56,6 +56,16 @@ namespace Challenge.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Name", "DisplayName" },
+                values: new object[] { "Admin", "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Name", "DisplayName" },
+                values: new object[] { "User", "User" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleName",
