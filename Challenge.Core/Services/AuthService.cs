@@ -1,4 +1,5 @@
-﻿using Challenge.Core.Contracts;
+﻿using Challenge.Core.Constants;
+using Challenge.Core.Contracts;
 using Challenge.Core.Models;
 using Challenge.Core.Options;
 using Microsoft.Extensions.Options;
@@ -33,16 +34,17 @@ namespace Challenge.Core.Services
 
             User user = uow.UserRepository.Get().SingleOrDefault(x => x.Email == email);
             if (user == null)
-                result.Error = "Invalid credentials."; //TODO: Avoid magic strings
+                result.Error = ErrorMessages.INVALID_CREDENTIALS;
             else
             {
                 bool validPassword = hasher.Verify(password, user.PasswordHash);
-                if (validPassword) {
+                if (validPassword)
+                {
                     string token = GenerateJwtToken(user);
                     result.Data = new LoginResult(user, token);
                 }
                 else
-                    result.Error = "Invalid credentials."; //TODO: Avoid magic strings
+                    result.Error = ErrorMessages.INVALID_CREDENTIALS;
             }
 
             return result;
@@ -64,7 +66,7 @@ namespace Challenge.Core.Services
                 result.Data = user;
             }
             else
-                result.Error = "Email used."; //TODO: Avoid magic strings
+                result.Error = ErrorMessages.EMAIL_USED;
 
             return result;
         }

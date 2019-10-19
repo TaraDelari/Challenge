@@ -1,4 +1,6 @@
-﻿using Challenge.Core.Contracts;
+﻿using Challenge.Core.Constants;
+using Challenge.Core.Contracts;
+using Challenge.Core.Exceptions;
 using System;
 
 namespace Challenge.Infrastructure.DataAccess
@@ -41,9 +43,9 @@ namespace Challenge.Infrastructure.DataAccess
                 context.SaveChanges();
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                throw new StorageException(ErrorMessages.STORAGE_ERROR, e);
             }
         }
     }

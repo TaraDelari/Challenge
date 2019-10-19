@@ -1,4 +1,4 @@
-﻿namespace Challenge.Core.Constatns
+﻿namespace Challenge.Core.Constants
 {
     public class LogEventIds
     {
