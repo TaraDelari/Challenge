@@ -7,7 +7,7 @@ namespace Challenge.Api.Adapters
     {
         internal static UserDto ToDto(this User user)
         {
-            UserDto dto = user == null ? null : new UserDto() { Id = user.Id, Email = user.Email };
+            UserDto dto = user == null ? null : new UserDto() { Id = user.Id, Email = user.Email, DisplayName = user.DisplayName };
             return dto;
         }
     }

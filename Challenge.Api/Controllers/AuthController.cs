@@ -46,7 +46,7 @@ namespace Challenge.Api.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            Result<User> registrationResult = authService.CreateUser(registerRequest.Email, registerRequest.Password);
+            Result<User> registrationResult = authService.CreateUser(registerRequest.Email, registerRequest.DisplayName, registerRequest.Password);
             if (registrationResult.Succeeded)
                 return Ok(registrationResult.Data.ToDto());
             else

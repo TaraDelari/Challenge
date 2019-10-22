@@ -41,7 +41,7 @@ namespace Challenge.Core.UnitTests.Services
             Mock<IHasher> hasherMock = new Mock<IHasher>();
             Mock<ITokenGenerator> tokenGeneratorMock = new Mock<ITokenGenerator>();
             IOptions<AccountOptions> accountOptionsMock = Microsoft.Extensions.Options.Options.Create(new AccountOptions());
-            User user = new User("email", "password");
+            User user = User.CreateNew("email", "display_name", "password");
             IQueryable<User> userRepoData = new List<User> { user }.AsQueryable();
             unitOfWorkMock.Setup(x => x.UserRepository.Get()).Returns(userRepoData);
             hasherMock.Setup(x => x.Verify(It.IsAny<string>(), It.IsAny<string>())).Returns(false);
@@ -64,7 +64,7 @@ namespace Challenge.Core.UnitTests.Services
             Mock<IHasher> hasherMock = new Mock<IHasher>();
             Mock<ITokenGenerator> tokenGeneratorMock = new Mock<ITokenGenerator>();
             IOptions<AccountOptions> accountOptionsMock = Microsoft.Extensions.Options.Options.Create(new AccountOptions());
-            User user = new User("email", "password");
+            User user = User.CreateNew("email", "display_name", "password");
             IQueryable<User> userRepoData = new List<User> { user }.AsQueryable();
             unitOfWorkMock.Setup(x => x.UserRepository.Get()).Returns(userRepoData);
             hasherMock.Setup(x => x.Verify(It.IsAny<string>(), It.IsAny<string>())).Returns(true);

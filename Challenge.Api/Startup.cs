@@ -66,7 +66,9 @@ namespace Challenge.Api
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IHasher, PasswordHasher>();
             services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<UrlFormatter>();
             services.AddTransient<AuthService>();
+            services.AddScoped<LinksService>();
 
             services.AddSwaggerGen(c =>
             {

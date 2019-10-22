@@ -20,6 +20,7 @@ namespace Challenge.Core.UnitTests.Services
         {
             //arrange
             string email = "test@example.com";
+            string displayName = "display_name";
             string password = "testPassword";
             string passwordHash = "testPasswordHash";
             Mock<IUnitOfWork> unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -32,7 +33,7 @@ namespace Challenge.Core.UnitTests.Services
             AuthService sut = new AuthService(unitOfWorkMock.Object, hasherMock.Object, tokenGeneratorMock.Object, accountOptionsMock);
 
             //act
-            Result<User> registrationResult = sut.CreateUser(email, password);
+            Result<User> registrationResult = sut.CreateUser(email, displayName, password);
 
             //assert
             unitOfWorkMock.Verify(x => x.UserRepository.Insert(It.IsAny<User>()), Times.Once);
@@ -54,7 +55,7 @@ namespace Challenge.Core.UnitTests.Services
             AuthService sut = new AuthService(unitOfWorkMock.Object, hasherMock.Object, tokenGeneratorMock.Object, accountOptionsMock);
 
             //act
-            Result<User> registrationResult = sut.CreateUser("email", "passwordHash");
+            Result<User> registrationResult = sut.CreateUser("email", "display_name", "passwordHash");
 
             //assert
             Assert.Collection(registrationResult.Data.Roles, x => { Assert.Equal(accountOptionsMock.Value.DefaultRole, x.Name); });
@@ -67,14 +68,14 @@ namespace Challenge.Core.UnitTests.Services
             Mock<IUnitOfWork> unitOfWorkMock = new Mock<IUnitOfWork>();
             Mock<IHasher> hasherMock = new Mock<IHasher>();
             Mock<ITokenGenerator> tokenGeneratorMock = new Mock<ITokenGenerator>();
-            User user = new User("email", "password");
+            User user = User.CreateNew("email", "display_name", "password");
             IQueryable<User> userRepoData = new List<User> { user }.AsQueryable();
             unitOfWorkMock.Setup(x => x.UserRepository.Get()).Returns(userRepoData);
             IOptions<AccountOptions> accountOptionsMock = Microsoft.Extensions.Options.Options.Create(new AccountOptions());
             AuthService sut = new AuthService(unitOfWorkMock.Object, hasherMock.Object, tokenGeneratorMock.Object, accountOptionsMock);
 
             //act
-            Result<User> userResult =  sut.CreateUser("email", "passwordHash");
+            Result<User> userResult =  sut.CreateUser("email", "display_name", "passwordHash");
 
             //assert
             Assert.False(userResult.Succeeded);

@@ -8,14 +8,30 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Challenge.Api.Migrations
 {
     [DbContext(typeof(ChallengeContext))]
-    [Migration("20191019171306_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20191022101900_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+
+            modelBuilder.Entity("Challenge.Core.Models.Link", b =>
+                {
+                    b.Property<string>("Url");
+
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("OriginalUrl")
+                        .IsRequired();
+
+                    b.HasKey("Url", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("links");
+                });
 
             modelBuilder.Entity("Challenge.Core.Models.Role", b =>
                 {
@@ -28,7 +44,7 @@ namespace Challenge.Api.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("Roles");
+                    b.ToTable("roles");
 
                     b.HasData(
                         new
@@ -43,10 +59,29 @@ namespace Challenge.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Challenge.Core.Models.Tag", b =>
+                {
+                    b.Property<string>("Content");
+
+                    b.Property<string>("Url");
+
+                    b.Property<string>("LinkUserId");
+
+                    b.HasKey("Content", "Url", "LinkUserId");
+
+                    b.HasIndex("Url", "LinkUserId");
+
+                    b.ToTable("tags");
+                });
+
             modelBuilder.Entity("Challenge.Core.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(255);
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -63,12 +98,12 @@ namespace Challenge.Api.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("Challenge.Core.Models.UserRole", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.Property<string>("RoleName");
 
@@ -76,7 +111,23 @@ namespace Challenge.Api.Migrations
 
                     b.HasIndex("RoleName");
 
-                    b.ToTable("UserRole");
+                    b.ToTable("user_roles");
+                });
+
+            modelBuilder.Entity("Challenge.Core.Models.Link", b =>
+                {
+                    b.HasOne("Challenge.Core.Models.User", "User")
+                        .WithMany("Links")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Challenge.Core.Models.Tag", b =>
+                {
+                    b.HasOne("Challenge.Core.Models.Link", "Link")
+                        .WithMany("Tags")
+                        .HasForeignKey("Url", "LinkUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Challenge.Core.Models.UserRole", b =>

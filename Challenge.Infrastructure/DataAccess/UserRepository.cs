@@ -14,11 +14,12 @@ namespace Challenge.Infrastructure.DataAccess
             this.context = context;
         }
 
-        public User Get(int id)
+        public User Get(string id)
         {
             User user = context.Users
-                .Include(x => x.UserRoles)
-                    .ThenInclude(x => x.Role)
+                .Include(x => x.Links)
+                    .Include(x => x.UserRoles)
+                        .ThenInclude(x => x.Role)
                 .SingleOrDefault(x => x.Id == id);
             return user;
         }
@@ -33,7 +34,7 @@ namespace Challenge.Infrastructure.DataAccess
             context.Users.Add(user);
         }
 
-        public void Delete(int id)
+        public void Delete(string id)
         {
             User user = context.Users.SingleOrDefault(x => x.Id == id);
             context.Remove(user);

@@ -44,7 +44,7 @@ namespace Challenge.Core.Services
             return result;
         }
 
-        public Result<User> CreateUser(string email, string password)
+        public Result<User> CreateUser(string email, string displayName, string password)
         {
             Result<User> result = new Result<User>();
 
@@ -52,7 +52,7 @@ namespace Challenge.Core.Services
             if (existingUser == null)
             {
                 string passwordHash = hasher.Hash(password);
-                User user = new User(email, passwordHash);
+                User user = User.CreateNew(email, displayName, passwordHash);
                 Role role = uow.RoleRepository.Get(accountOptions.DefaultRole);
                 user.AssignRole(role);
                 uow.UserRepository.Insert(user);
