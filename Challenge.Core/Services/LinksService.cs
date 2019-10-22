@@ -26,12 +26,20 @@ namespace Challenge.Core.Services
             User user = uow.UserRepository.Get(userId);
             string formattedUrl = formater.Format(originalUrl);
 
-            if (user.Links.Count > 0 && user.Links.Any(x => x.Url == formattedUrl))
+            if (user.Links.Count > 0 && user.Links.Any(x => x.WebPageUrl == formattedUrl))
                 result.Error = ErrorMessages.LINK_ALREADY_ADDED;
             else
             {
+                // Check if we already have that web page
+                WebPage webPage = this.uow.WebPageRepository.Get(formattedUrl);
+                if (webPage == null)
+                {
+                    webPage = new WebPage(formattedUrl);
+                    //TODO: Add keywords
+                    this.uow.WebPageRepository.Insert(webPage);
+                }
                 IEnumerable<Tag> tagObjects = tags.Select(x => new Tag(x));
-                Link link = new Link(originalUrl, formattedUrl, user);
+                Link link = new Link(webPage, user);
                 link.AddTags(tagObjects);
                 uow.LinkRepository.Insert(link);
                 uow.SaveChanges();
@@ -43,14 +51,15 @@ namespace Challenge.Core.Services
         public IEnumerable<Link> GetLinks(string userId)
         {
             User user = uow.UserRepository.Get(userId);
-            IEnumerable<Link> userLinks = uow.LinkRepository.Get().Where(x => x.UserId == userId);
+            //TODO: Check if user is null
+            IEnumerable<Link> userLinks = user.Links.Where(x => x.UserId == userId);
             return userLinks;
         }
 
         public IEnumerable<Link> SearchLinks(string userId, string[] tags)
         {
             User user = uow.UserRepository.Get(userId);
-            IEnumerable<Link> userLinks = uow.LinkRepository.Get().Where(x => x.UserId == userId);
+            IEnumerable<Link> userLinks = user.Links.Where(x => x.UserId == userId);
             IEnumerable<string> tagsLower = tags.Select(x => x.ToLower());
             List<Link> result = new List<Link>();
             foreach(Link link in userLinks)

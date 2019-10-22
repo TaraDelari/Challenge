@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Challenge.Api.Migrations
 {
     [DbContext(typeof(ChallengeContext))]
-    [Migration("20191022101900_Initial")]
+    [Migration("20191022131808_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,16 +17,26 @@ namespace Challenge.Api.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
+            modelBuilder.Entity("Challenge.Core.Models.Keyword", b =>
+                {
+                    b.Property<string>("Word");
+
+                    b.Property<string>("WebPageUrl");
+
+                    b.HasKey("Word", "WebPageUrl");
+
+                    b.HasIndex("WebPageUrl");
+
+                    b.ToTable("keywords");
+                });
+
             modelBuilder.Entity("Challenge.Core.Models.Link", b =>
                 {
-                    b.Property<string>("Url");
+                    b.Property<string>("WebPageUrl");
 
                     b.Property<string>("UserId");
 
-                    b.Property<string>("OriginalUrl")
-                        .IsRequired();
-
-                    b.HasKey("Url", "UserId");
+                    b.HasKey("WebPageUrl", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -114,11 +124,34 @@ namespace Challenge.Api.Migrations
                     b.ToTable("user_roles");
                 });
 
+            modelBuilder.Entity("Challenge.Core.Models.WebPage", b =>
+                {
+                    b.Property<string>("Url")
+                        .ValueGeneratedOnAdd();
+
+                    b.HasKey("Url");
+
+                    b.ToTable("webpages");
+                });
+
+            modelBuilder.Entity("Challenge.Core.Models.Keyword", b =>
+                {
+                    b.HasOne("Challenge.Core.Models.WebPage", "WebPage")
+                        .WithMany("Keywords")
+                        .HasForeignKey("WebPageUrl")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Challenge.Core.Models.Link", b =>
                 {
                     b.HasOne("Challenge.Core.Models.User", "User")
                         .WithMany("Links")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Challenge.Core.Models.WebPage", "WebPage")
+                        .WithMany()
+                        .HasForeignKey("WebPageUrl")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

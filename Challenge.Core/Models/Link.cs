@@ -8,20 +8,17 @@ namespace Challenge.Core.Models
     {
         public string UserId { get; private set; }
         public User User { get; internal set; }
-        public string OriginalUrl { get; private set; }
-        public string Url { get; private set; }
+        public string WebPageUrl { get; internal set; }
+        public WebPage WebPage { get; private set; }
         public ICollection<Tag> Tags { get; private set; }
-        public ICollection<Keyword> Keywords { get; private set; }
 
         private Link() { }
 
-        public Link(string originalUrl, string url, User user)
+        public Link(WebPage webPage, User user)
         {
-            OriginalUrl = originalUrl;
-            Url = url;
+            WebPage = webPage;
             User = user;
             Tags = new List<Tag>();
-            Keywords = new List<Keyword>();
         }
 
         public void AddTags(IEnumerable<Tag> tags)
@@ -46,10 +43,10 @@ namespace Challenge.Core.Models
             if (other.GetType() != typeof(Link))
                 return false;
 
-            if (Url == null || other.Url == null || UserId == null || other.UserId == null)
+            if (WebPageUrl == null || other.WebPageUrl == null || UserId == null || other.UserId == null)
                 return false;
 
-            return Url == other.Url && UserId == other.UserId;
+            return WebPageUrl == other.WebPageUrl && UserId == other.UserId;
         }
 
         public static bool operator ==(Link a, Link b)
@@ -70,7 +67,7 @@ namespace Challenge.Core.Models
 
         public override int GetHashCode()
         {
-            return $"{typeof(Link)}{Url}{UserId}".GetHashCode();
+            return $"{typeof(Link)}{WebPageUrl}{UserId}".GetHashCode();
         }
     }
 }

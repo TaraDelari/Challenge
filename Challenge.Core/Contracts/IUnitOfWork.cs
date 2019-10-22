@@ -5,6 +5,7 @@
         IUserRepository UserRepository { get; }
         IRoleRepository RoleRepository { get; }
         ILinkRepository LinkRepository { get; }
+        IWebPageRepository WebPageRepository { get; }
         void SaveChanges();
     }
 }

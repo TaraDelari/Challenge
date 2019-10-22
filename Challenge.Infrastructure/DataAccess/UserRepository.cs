@@ -18,8 +18,9 @@ namespace Challenge.Infrastructure.DataAccess
         {
             User user = context.Users
                 .Include(x => x.Links)
-                    .Include(x => x.UserRoles)
-                        .ThenInclude(x => x.Role)
+                    .ThenInclude(x => x.Tags)
+                .Include(x => x.UserRoles)
+                    .ThenInclude(x => x.Role)
                 .SingleOrDefault(x => x.Id == id);
             return user;
         }

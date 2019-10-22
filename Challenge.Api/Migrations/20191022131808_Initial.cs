@@ -34,22 +34,14 @@ namespace Challenge.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "links",
+                name: "webpages",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(nullable: false),
-                    Url = table.Column<string>(nullable: false),
-                    OriginalUrl = table.Column<string>(nullable: false)
+                    Url = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_links", x => new { x.Url, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_links_users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_webpages", x => x.Url);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,6 +69,48 @@ namespace Challenge.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "keywords",
+                columns: table => new
+                {
+                    Word = table.Column<string>(nullable: false),
+                    WebPageUrl = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_keywords", x => new { x.Word, x.WebPageUrl });
+                    table.ForeignKey(
+                        name: "FK_keywords_webpages_WebPageUrl",
+                        column: x => x.WebPageUrl,
+                        principalTable: "webpages",
+                        principalColumn: "Url",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "links",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    WebPageUrl = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_links", x => new { x.WebPageUrl, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_links_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_links_webpages_WebPageUrl",
+                        column: x => x.WebPageUrl,
+                        principalTable: "webpages",
+                        principalColumn: "Url",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tags",
                 columns: table => new
                 {
@@ -91,7 +125,7 @@ namespace Challenge.Api.Migrations
                         name: "FK_tags_links_Url_LinkUserId",
                         columns: x => new { x.Url, x.LinkUserId },
                         principalTable: "links",
-                        principalColumns: new[] { "Url", "UserId" },
+                        principalColumns: new[] { "WebPageUrl", "UserId" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -104,6 +138,11 @@ namespace Challenge.Api.Migrations
                 table: "roles",
                 columns: new[] { "Name", "DisplayName" },
                 values: new object[] { "User", "User" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_keywords_WebPageUrl",
+                table: "keywords",
+                column: "WebPageUrl");
 
             migrationBuilder.CreateIndex(
                 name: "IX_links_UserId",
@@ -130,6 +169,9 @@ namespace Challenge.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "keywords");
+
+            migrationBuilder.DropTable(
                 name: "tags");
 
             migrationBuilder.DropTable(
@@ -143,6 +185,9 @@ namespace Challenge.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "users");
+
+            migrationBuilder.DropTable(
+                name: "webpages");
         }
     }
 }

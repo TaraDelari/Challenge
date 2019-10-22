@@ -11,7 +11,7 @@ namespace Challenge.Api.Adapters
         {
             return link == null ? null : new LinkDto
             {
-                Link = link.Url,
+                Link = link.WebPage.Url,
                 Tags = link.Tags.Select(x => x.Content).ToList()
             };
         }

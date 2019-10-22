@@ -14,7 +14,8 @@ namespace Challenge.Core.UnitTests.Models
         public void NewTagsContainDuplicates_DuplicatesIgnored()
         {
             //arrange
-            Link link = new Link("http://example.com", "http://example.com", User.CreateNew("testuser@example.com", "testUser", "abc"));
+            WebPage webPage = new WebPage("http://example.com");
+            Link link = new Link(webPage, User.CreateNew("testuser@example.com", "testUser", "abc"));
             Tag[] newTags = new Tag[] { new Tag("tag1"), new Tag("tag2"), new Tag("tag1"), new Tag("tag3"), new Tag("tag4"), new Tag("tag4"), new Tag("tag1") };
             Tag[] expectedTags = new Tag[] { new Tag("tag1"), new Tag("tag2"), new Tag("tag3"), new Tag("tag4") };
 
@@ -32,7 +33,8 @@ namespace Challenge.Core.UnitTests.Models
         public void TagsAlreadyExist_ExistingTagsIgnored()
         {
             //arrange
-            Link link = new Link("http://example.com", "http://example.com", User.CreateNew("testuser@example.com", "testUser", "abc"));
+            WebPage webPage = new WebPage("http://example.com");
+            Link link = new Link(webPage, User.CreateNew("testuser@example.com", "testUser", "abc"));
             Tag[] existingTags = new Tag[] { new Tag("tag1"), new Tag("tag2"), new Tag("tag3") };
             Tag[] newTags = new Tag[] { new Tag("tag4"), new Tag("tag2"), new Tag("tag5"), new Tag("tag6") };
             Tag[] expectedTags = new Tag[] { new Tag("tag1"), new Tag("tag2"), new Tag("tag3"), new Tag("tag4"), new Tag("tag5"), new Tag("tag6") };

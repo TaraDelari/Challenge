@@ -11,6 +11,7 @@ namespace Challenge.Infrastructure.DataAccess
         UserRepository userRepository;
         RoleRepository roleRepository;
         LinkRepository linkRepository;
+        WebPageRepository webPageRepository;
 
         public UnitOfWork(ChallengeContext context)
         {
@@ -44,6 +45,16 @@ namespace Challenge.Infrastructure.DataAccess
                 if (linkRepository == null)
                     linkRepository = new LinkRepository(context);
                 return linkRepository;
+            }
+        }
+
+        public IWebPageRepository WebPageRepository
+        {
+            get
+            {
+                if (webPageRepository == null)
+                    webPageRepository = new WebPageRepository(context);
+                return webPageRepository;
             }
         }
 

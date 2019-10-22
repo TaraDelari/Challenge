@@ -2,9 +2,9 @@
 {
     public class Keyword
     {
-        public string Content { get; private set; }
-        public string Url { get; private set; }
-        public Link Link { get; internal set; }
+        public string Word { get; private set; }
+        public string WebPageUrl { get; private set; }
+        public WebPage WebPage { get; internal set; }
 
         private Keyword() { }
     }

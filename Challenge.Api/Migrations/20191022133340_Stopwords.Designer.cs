@@ -2,14 +2,16 @@
 using Challenge.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Challenge.Api.Migrations
 {
     [DbContext(typeof(ChallengeContext))]
-    partial class ChallengeContextModelSnapshot : ModelSnapshot
+    [Migration("20191022133340_Stopwords")]
+    partial class Stopwords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
