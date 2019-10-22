@@ -8,7 +8,6 @@ using Challenge.Api.DataContracts.Out;
 using Challenge.Core.Models;
 using Challenge.Core.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Challenge.Api.Controllers
@@ -52,12 +51,29 @@ namespace Challenge.Api.Controllers
             return Ok(linkDtos);
         }
 
+        /// <summary>
+        /// Gets links for user by tags.
+        /// </summary>
+        /// <param name="searchRequest">Search request containing parameters.</param>
+        /// <returns>Links containing given parameters.</returns>
         [HttpPost("search")]
         public ActionResult Search([FromBody] SearchRequest searchRequest)
         {
             IEnumerable<Link> links = linksService.SearchLinks(CurrentUserId, searchRequest.Tags);
             IEnumerable<LinkDto> linkDtos = links.Select(x => x.ToDto());
             return Ok(linkDtos);
+        }
+
+        /// <summary>
+        /// Get suggested tags for existing link, based on the link content.
+        /// </summary>
+        /// <param name="linkUrl">Link URL.</param>
+        /// <returns>Suggested tags.</returns>
+        [HttpGet("tags-content-suggestions")]
+        public ActionResult GetSuggestedTags(string linkUrl)
+        {
+            IEnumerable<string> tags = linksService.GetSuggestedTags(CurrentUserId, linkUrl);
+            return Ok(tags);
         }
     }
 }

@@ -64,11 +64,13 @@ namespace Challenge.Api
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IHasher, PasswordHasher>();
-            services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
-            services.AddScoped<UrlFormatter>();
+            services.AddTransient<IHasher, PasswordHasher>();
+            services.AddTransient<ITokenGenerator, JwtTokenGenerator>();
+            services.AddTransient<UrlFormatter>();
             services.AddTransient<AuthService>();
-            services.AddScoped<LinksService>();
+            services.AddTransient<LinksService>();
+            services.AddTransient<IWebPageParser, WebPageParser>();
+            services.AddTransient<IKeywordsExtractor, KeywordsExtractor>();
 
             services.AddSwaggerGen(c =>
             {

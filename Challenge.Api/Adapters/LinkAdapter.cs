@@ -1,6 +1,5 @@
 ﻿using Challenge.Api.DataContracts.Out;
 using Challenge.Core.Models;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Challenge.Api.Adapters

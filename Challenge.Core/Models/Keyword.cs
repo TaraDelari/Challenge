@@ -7,5 +7,10 @@
         public WebPage WebPage { get; internal set; }
 
         private Keyword() { }
+
+        public Keyword(string word)
+        {
+            Word = word;
+        }
     }
 }

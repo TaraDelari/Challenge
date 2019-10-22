@@ -11,6 +11,7 @@ namespace Challenge.Infrastructure.DataAccess
         UserRepository userRepository;
         RoleRepository roleRepository;
         LinkRepository linkRepository;
+        StopwordRepository stopwordRepository;
         WebPageRepository webPageRepository;
 
         public UnitOfWork(ChallengeContext context)
@@ -45,6 +46,16 @@ namespace Challenge.Infrastructure.DataAccess
                 if (linkRepository == null)
                     linkRepository = new LinkRepository(context);
                 return linkRepository;
+            }
+        }
+
+        public IStopwordRepository StopwordRepository
+        {
+            get
+            {
+                if (stopwordRepository == null)
+                    stopwordRepository = new StopwordRepository(context);
+                return stopwordRepository;
             }
         }
 
